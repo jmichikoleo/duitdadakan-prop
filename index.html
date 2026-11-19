@@ -121,6 +121,15 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
 .rmain.warn2{background:#ff9100}
 .rmain.late2{background:var(--red);color:#fff;animation:blink 1s steps(2) infinite}
 .rrow{display:flex;justify-content:space-between;font-size:16px;padding:8px 0;border-top:2px dashed #ccc}
+/* overdue notification */
+.notif{position:fixed;top:10px;left:50%;width:calc(100% - 20px);max-width:460px;transform:translate(-50%,-160%);z-index:18;display:flex;gap:12px;align-items:flex-start;background:rgba(250,250,250,.97);border-radius:20px;padding:12px 14px;box-shadow:0 10px 30px #0006;border-left:8px solid var(--red);font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;transition:transform .45s cubic-bezier(.2,1.4,.4,1),opacity .25s;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.notif.on{transform:translate(-50%,0)}
+.n-ico{font-size:28px;background:linear-gradient(135deg,var(--yel),var(--pink));border-radius:10px;width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center}
+.n-body{flex:1;min-width:0}
+.n-head{display:flex;justify-content:space-between;font-size:13px;color:#666}
+.n-head b{color:#222}
+.n-title{font-weight:900;font-size:17px;color:var(--red);margin-top:2px}
+.n-text{font-size:15px;color:#111;line-height:1.3;margin-top:2px}
 /* crew panel */
 #crew{position:fixed;inset:auto 0 0 0;max-width:480px;margin:0 auto;background:#111;color:#eee;font-family:Arial,sans-serif;font-size:13px;padding:14px;border-radius:16px 16px 0 0;z-index:50;display:none;max-height:80vh;overflow:auto;box-shadow:0 -6px 30px #000}
 #crew.on{display:block}
@@ -251,6 +260,16 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
 </div>
 <div class="toast" id="toast" data-t="denied"></div>
 
+<!-- overdue notification banner (phone-notification style; swipe up/sideways or tap to dismiss) -->
+<div class="notif" id="notif">
+  <div class="n-ico">💸</div>
+  <div class="n-body">
+    <div class="n-head"><b>DuitDadakan</b><span data-t="n_now"></span></div>
+    <div class="n-title" id="n-title"></div>
+    <div class="n-text" id="n-text"></div>
+  </div>
+</div>
+
 <!-- due-date reminder (after each confirm; swipe or tap OK to dismiss) -->
 <div class="remind" id="remind">
   <div class="rcard" id="rcard">
@@ -290,6 +309,10 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
     <button data-rem="7">7 days left</button><button data-rem="3">3 days left</button><button data-rem="1">1 day left</button>
     <button data-rem="0">Due today</button><button data-rem="-3">3 days late</button><button data-rem="-7">7 days late</button>
   </div>
+  <h4>Overdue notification (also sets the app to overdue)</h4>
+  <div class="g">
+    <button data-late="1">1 day late</button><button data-late="3">3 days late</button><button data-late="7">7 days late</button><button data-late="14">14 days late</button>
+  </div>
   <h4>Borrowing limit (auto-blocks when debt would go over)</h4>
   <div class="g"><input id="c-limit" inputmode="numeric"><button id="c-setlimit">Set limit</button></div>
   <h4>Language</h4>
@@ -311,6 +334,9 @@ back:"← Kembali",b_h:"Mau pinjam berapa?",tenor:"Tenor",days7:"7 hari",interes
 b_fine:"*Biaya layanan 30% dipotong di muka. Denda 5%/hari keterlambatan. Data kamu dapat dibagikan ke pihak ketiga untuk keperluan penagihan.",
 success:"DANA CAIR!",success_sub:"sudah masuk ke rekening kamu",overdue:"TERLAMBAT",days:"HARI",
 lim_h:"BATAS PINJAMAN TERCAPAI",lim_cant:"KAMU TIDAK BISA MEMINJAM LAGI",lim_p:"Tagihan kamu sudah lewat jatuh tempo 7 hari. Pengajuan pinjaman baru DITOLAK.",lim_warn:"TIM KAMI SEDANG MENUJU KE LOKASI KAMU.",ok:"OK",
+n_now:"sekarang",n_t1:"⚠️ TAGIHAN TERLAMBAT {d} HARI",n_b1:"Kamu belum membayar tagihan {amt}. Denda 5%/hari mulai berjalan. Segera bayar!",
+n_t2:"🚨 TERLAMBAT {d} HARI",n_b2:"Ini peringatan terakhir. Bayar {amt} SEKARANG atau akan ada KONSEKUENSI.",
+n_t3:"🔴 TERLAMBAT {d} HARI",n_b3:"Kamu sudah mengabaikan kami. Kami sudah menghubungi kontak kamu. Kami tahu di mana kamu tinggal.",
 r_title:"Pengingat Pembayaran",r_total:"Total tagihan",r_ok:"OKE, MENGERTI",r_in:"Jatuh tempo dalam",r_today:"JATUH TEMPO",r_today2:"HARI INI!",r_late:"TERLAMBAT",r_days:"HARI",
 nope:"🚫 KAMU SUDAH TIDAK BISA MEMINJAM LAGI",limit_btn:"🚫 LIMIT HABIS",
 locked_h:"AKUN DIBEKUKAN",locked_sub:"Segera lunasi seluruh tagihan kamu.",loc:"📍 Lokasi kamu sudah terdeteksi",btn_pay:"BAYAR SEKARANG",btn_extend:"PERPANJANG",btn_borrow:"PINJAM",btn_cs:"HUBUNGI CS",denied:"⛔ AKSES DITOLAK",late_lbl:"TERLAMBAT 7 HARI"},
@@ -324,13 +350,16 @@ back:"← Back",b_h:"How much do you need?",tenor:"Term",days7:"7 days",interest
 b_fine:"*30% service fee deducted upfront. 5%/day late penalty. Your data may be shared with third parties for collection purposes.",
 success:"MONEY SENT!",success_sub:"is now in your account",overdue:"OVERDUE",days:"DAYS",
 lim_h:"BORROWING LIMIT REACHED",lim_cant:"YOU CANNOT BORROW ANYMORE",lim_p:"Your payment is 7 days overdue. New loan requests are DENIED.",lim_warn:"OUR TEAM IS ON THE WAY TO YOUR LOCATION.",ok:"OK",
+n_now:"now",n_t1:"⚠️ PAYMENT {d} DAYS OVERDUE",n_b1:"You haven't paid your {amt} bill. A 5%/day penalty has started. Pay now!",
+n_t2:"🚨 {d} DAYS OVERDUE",n_b2:"This is your final warning. Pay {amt} NOW or there will be CONSEQUENCES.",
+n_t3:"🔴 {d} DAYS OVERDUE",n_b3:"You've been ignoring us. We have contacted your contacts. We know where you live.",
 r_title:"Payment Reminder",r_total:"Amount due",r_ok:"OK, GOT IT",r_in:"Due in",r_today:"DUE",r_today2:"TODAY!",r_late:"OVERDUE BY",r_days:"DAYS",
 nope:"🚫 YOU ARE NO LONGER ALLOWED TO BORROW",limit_btn:"🚫 LIMIT REACHED",
 locked_h:"ACCOUNT FROZEN",locked_sub:"Pay off your full balance immediately.",loc:"📍 Your location has been detected",btn_pay:"PAY NOW",btn_extend:"EXTEND",btn_borrow:"BORROW",btn_cs:"CONTACT SUPPORT",denied:"⛔ ACCESS DENIED",late_lbl:"7 DAYS OVERDUE"}
 };
 const CHIPS=[500000,1000000,5000000,25000000,50000000,100000000];
 const LIMIT=150000000;
-const DEF={lang:"id",name:"",debt:0,borrows:0,overdue:false,limitMode:false,blocked:false,limit:150000000,screen:"ad",dueTs:0};
+const DEF={lang:"id",name:"",debt:0,borrows:0,overdue:false,limitMode:false,blocked:false,limit:150000000,lateDays:7,screen:"ad",dueTs:0};
 let S=Object.assign({},DEF);
 try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem("dd-state")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("dd-state",JSON.stringify(S))}catch(e){}};
@@ -357,22 +386,44 @@ function render(){
   $("#d-limit").style.color=S.blocked||S.debt>=S.limit?"var(--red)":"var(--grn)";
   $("#c-limit").placeholder="now "+S.limit.toLocaleString("id-ID");
   const dd=$("#d-due");
-  if(S.overdue){dd.textContent=t("late_lbl");dd.className="late"}
+  if(S.overdue){dd.textContent=`${t("overdue")} ${S.lateDays} ${t("days")}`;dd.className="late"}
   else{dd.textContent=S.borrows?fmtDate(S.dueTs):"-";dd.className=""}
   $("#b-due").textContent=fmtDate(Date.now()+7*DAY);
   $("#l-debt").textContent="- "+rp(S.debt);
-  $("#l-days").textContent="7";
+  $("#l-days").textContent=S.lateDays;
   setDebt(S.debt,false);
   $("#t-overdue").classList.toggle("on",S.overdue);
   $("#t-limit").classList.toggle("on",S.limitMode);
   $("#t-blocked").classList.toggle("on",S.blocked);
   $$("#crew [data-lang]").forEach(b=>b.classList.toggle("on",b.dataset.lang===S.lang));
 }
+let notifT;
 function show(id){
   S.screen=id;save();
   $$(".screen").forEach(s=>s.classList.toggle("on",s.id==="s-"+id));
   window.scrollTo(0,0);
+  // opening the app while overdue → the overdue notification drops in
+  clearTimeout(notifT);
+  if(id==="dash"&&S.overdue)notifT=setTimeout(()=>{if(S.screen==="dash")showOverdue(S.lateDays)},1500);
 }
+function showOverdue(d){
+  const lvl=d>=7?3:d>=3?2:1,fill=s=>t(s).replace("{d}",d).replace("{amt}",rp(S.debt));
+  $("#n-title").textContent=fill("n_t"+lvl);$("#n-text").textContent=fill("n_b"+lvl);
+  const n=$("#notif");n.style.transform="";n.style.opacity="";
+  n.classList.remove("on");void n.offsetWidth;n.classList.add("on");
+  if(navigator.vibrate)navigator.vibrate([250,120,250]);
+}
+function hideNotif(dx){
+  const n=$("#notif");n.style.transform=dx?`translate(calc(-50% + ${dx}px),0)`:"";n.style.opacity=dx?"0":"";
+  n.classList.remove("on");setTimeout(()=>{n.style.transform="";n.style.opacity=""},450);
+}
+(function(){
+  const n=$("#notif");let sx=0,sy=0,drag=false,moved=false;
+  n.addEventListener("pointerdown",e=>{drag=true;moved=false;sx=e.clientX;sy=e.clientY;n.style.transition="none";n.setPointerCapture(e.pointerId)});
+  n.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-sx,dy=Math.min(e.clientY-sy,0);if(Math.abs(dx)+Math.abs(dy)>5)moved=true;n.style.transform=`translate(calc(-50% + ${dx}px),${dy}px)`});
+  n.addEventListener("pointerup",e=>{if(!drag)return;drag=false;n.style.transition="";const dx=e.clientX-sx,dy=e.clientY-sy;
+    if(Math.abs(dx)>70)hideNotif(dx>0?500:-500);else if(dy<-30||!moved)hideNotif(0);else n.style.transform=""});
+})();
 let shownDebt=0;
 function setDebt(v,animate){
   const el=$("#d-debt");
@@ -480,6 +531,7 @@ $("#c-set").onclick=()=>{const v=parseInt($("#c-debt").value.replace(/\D/g,""))|
 $$("[data-add]").forEach(b=>b.onclick=()=>{S.debt+= +b.dataset.add;S.borrows++;S.dueTs=Date.now()+7*DAY;save();render()});
 $("#t-overdue").onclick=()=>{S.overdue=!S.overdue;save();render()};
 $("#t-limit").onclick=()=>{S.limitMode=!S.limitMode;save();render()};
+$$("[data-late]").forEach(b=>b.onclick=()=>{$("#crew").classList.remove("on");S.overdue=true;S.lateDays=+b.dataset.late;save();render();showOverdue(S.lateDays)});
 $$("[data-rem]").forEach(b=>b.onclick=()=>{$("#crew").classList.remove("on");showReminder(+b.dataset.rem)});
 $("#t-blocked").onclick=()=>{S.blocked=!S.blocked;save();render()};
 $("#c-setlimit").onclick=()=>{const v=parseInt($("#c-limit").value.replace(/\D/g,""))||0;if(v){S.limit=v;$("#c-limit").value="";save();render()}};
