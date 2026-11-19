@@ -86,7 +86,8 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
 .modal.on{display:flex;animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
 .mbox{max-width:420px;width:100%;background:#fff;border:6px solid var(--red);border-radius:24px;padding:24px 18px;text-align:center;box-shadow:0 0 60px var(--red)}
 .mbox .ico{font-size:72px}
-.mbox h2{color:var(--red);font-size:30px;line-height:1.05;margin:8px 0 12px}
+.mbox h2{color:var(--red);font-size:36px;line-height:1.05;margin:8px 0 12px}
+.cant{background:var(--ink);color:#fff;font-size:24px;line-height:1.15;padding:16px 10px;border-radius:14px;margin-bottom:14px}
 .mbox p{font-family:Arial,sans-serif;font-size:16px;margin:0 0 14px}
 .warn{background:var(--red);color:#fff;padding:14px;border-radius:12px;font-size:20px;margin-bottom:16px;visibility:hidden}
 .warn.on{visibility:visible;animation:blink .7s steps(2) infinite}
@@ -231,6 +232,7 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
   <div class="mbox">
     <div class="ico">⛔</div>
     <h2 data-t="lim_h"></h2>
+    <div class="cant" data-t="lim_cant"></div>
     <p data-t="lim_p"></p>
     <div class="warn" id="warn" data-t="lim_warn"></div>
     <button class="big-btn red" id="lim-ok" data-t="ok"></button>
@@ -281,7 +283,7 @@ testi1:"\"Cair cepet bgt, ga sampe 5 menit!!\" — Rina, Bekasi",testi2:"\"Gampa
 back:"← Kembali",b_h:"Mau pinjam berapa?",tenor:"Tenor",days7:"7 hari",interest:"Bunga",confirm:"KONFIRMASI ✅",
 b_fine:"*Biaya layanan 30% dipotong di muka. Denda 5%/hari keterlambatan. Data kamu dapat dibagikan ke pihak ketiga untuk keperluan penagihan.",
 success:"DANA CAIR!",success_sub:"sudah masuk ke rekening kamu",overdue:"TERLAMBAT",days:"HARI",
-lim_h:"BATAS PINJAMAN TERCAPAI",lim_p:"Tagihan kamu sudah lewat jatuh tempo 7 hari. Pengajuan pinjaman baru DITOLAK.",lim_warn:"TIM KAMI SEDANG MENUJU KE LOKASI KAMU.",ok:"OK",
+lim_h:"BATAS PINJAMAN TERCAPAI",lim_cant:"KAMU TIDAK BISA MEMINJAM LAGI",lim_p:"Tagihan kamu sudah lewat jatuh tempo 7 hari. Pengajuan pinjaman baru DITOLAK.",lim_warn:"TIM KAMI SEDANG MENUJU KE LOKASI KAMU.",ok:"OK",
 nope:"🚫 KAMU SUDAH TIDAK BISA MEMINJAM LAGI",limit_btn:"🚫 LIMIT HABIS",
 locked_h:"AKUN DIBEKUKAN",locked_sub:"Segera lunasi seluruh tagihan kamu.",loc:"📍 Lokasi kamu sudah terdeteksi",btn_pay:"BAYAR SEKARANG",btn_extend:"PERPANJANG",btn_borrow:"PINJAM",btn_cs:"HUBUNGI CS",denied:"⛔ AKSES DITOLAK",late_lbl:"TERLAMBAT 7 HARI"},
 en:{search:"fast cash loan online no hassle",ad_tag:"Ad",ad_burst:"0%<br>INTEREST*",ad_h:"NEED CASH<br>RIGHT NOW?",ad_sub:"Money in 5 MINUTES, no collateral!",ad_pts:"<li>✅ No credit check</li><li>✅ Just your ID card</li><li>✅ 100% GUARANTEED APPROVAL</li>",ad_cta:"CLICK HERE!! 👆",ad_fine:"*T&C apply. Promo rate valid for the first day only.",
@@ -293,7 +295,7 @@ testi1:"\"Got the money in under 5 minutes!!\" — Rina, Bekasi",testi2:"\"Super
 back:"← Back",b_h:"How much do you need?",tenor:"Term",days7:"7 days",interest:"Interest",confirm:"CONFIRM ✅",
 b_fine:"*30% service fee deducted upfront. 5%/day late penalty. Your data may be shared with third parties for collection purposes.",
 success:"MONEY SENT!",success_sub:"is now in your account",overdue:"OVERDUE",days:"DAYS",
-lim_h:"BORROWING LIMIT REACHED",lim_p:"Your payment is 7 days overdue. New loan requests are DENIED.",lim_warn:"OUR TEAM IS ON THE WAY TO YOUR LOCATION.",ok:"OK",
+lim_h:"BORROWING LIMIT REACHED",lim_cant:"YOU CANNOT BORROW ANYMORE",lim_p:"Your payment is 7 days overdue. New loan requests are DENIED.",lim_warn:"OUR TEAM IS ON THE WAY TO YOUR LOCATION.",ok:"OK",
 nope:"🚫 YOU ARE NO LONGER ALLOWED TO BORROW",limit_btn:"🚫 LIMIT REACHED",
 locked_h:"ACCOUNT FROZEN",locked_sub:"Pay off your full balance immediately.",loc:"📍 Your location has been detected",btn_pay:"PAY NOW",btn_extend:"EXTEND",btn_borrow:"BORROW",btn_cs:"CONTACT SUPPORT",denied:"⛔ ACCESS DENIED",late_lbl:"7 DAYS OVERDUE"}
 };
