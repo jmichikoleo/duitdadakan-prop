@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#ff1f8f">
+<meta name="robots" content="noindex,nofollow">
+<!-- Fictional prop for a short film. Not a real lender; collects and sends no data. -->
+<title>DuitDadakan</title>
+<style>
+:root{--pink:#ff1f8f;--yel:#ffe600;--grn:#00d26a;--red:#ff1744;--ink:#1a0033;--purple:#7c4dff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Arial Black","Arial Rounded MT Bold","Helvetica Neue",Arial,sans-serif;background:#1a0033;color:var(--ink);overflow-x:hidden}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:linear-gradient(165deg,#ffe600 0%,#ff9100 32%,#ff1f8f 66%,#7c4dff 100%);position:relative;overflow:hidden}
+.screen{display:none;min-height:100vh;padding:0 16px 32px;flex-direction:column}
+.screen.on{display:flex}
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px}
+.logo{font-size:24px;color:#fff;text-shadow:3px 3px 0 var(--ink);letter-spacing:-.5px;user-select:none;cursor:default}
+.logo b{color:var(--yel)}
+.lang{display:flex;background:#fff;border:3px solid var(--ink);border-radius:99px;overflow:hidden;font-size:13px}
+.lang button{border:0;background:none;padding:6px 10px;font:inherit;color:var(--ink);cursor:pointer}
+.lang button.on{background:var(--ink);color:var(--yel)}
+.marquee{background:var(--ink);color:var(--yel);white-space:nowrap;overflow:hidden;margin:0 -16px 14px;padding:8px 0;font-size:15px}
+.marquee span{display:inline-block;padding-left:100%;animation:mq 12s linear infinite}
+@keyframes mq{to{transform:translateX(-100%)}}
+.card{background:#fff;border:4px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);padding:18px;margin-bottom:16px}
+h1,h2,h3{margin:0}
+.big-btn{display:block;width:100%;border:4px solid var(--ink);border-radius:20px;padding:22px 12px;font:inherit;font-size:26px;letter-spacing:.5px;color:var(--ink);background:var(--grn);box-shadow:0 8px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.big-btn:active{transform:translateY(6px);box-shadow:0 2px 0 var(--ink)}
+.pulse{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{filter:brightness(1.15);transform:scale(1.03)}}
+.fine{font-family:Arial,sans-serif;font-size:10px;color:#555;line-height:1.35;margin-top:10px}
+/* ad */
+#s-ad{background:#e9e9ee;padding-top:16px}
+.fake-search{background:#fff;border-radius:99px;padding:12px 18px;font-family:Arial,sans-serif;color:#333;font-size:15px;box-shadow:0 1px 4px #0002;margin-bottom:16px}
+.fake-res{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.fake-res i{display:block;height:10px;background:#ddd;border-radius:5px;margin:6px 0}
+.ad-wrap{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;padding:18px;z-index:5;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.ad{max-width:420px;width:100%;background:linear-gradient(160deg,var(--yel),#ff9100 55%,var(--pink));border:5px solid var(--ink);border-radius:26px;padding:20px;text-align:center;position:relative;box-shadow:0 0 0 6px var(--yel),0 0 40px var(--pink)}
+.ad .x{position:absolute;top:8px;right:12px;font-family:Arial;font-size:14px;color:#0007}
+.ad .tag{position:absolute;top:10px;left:12px;font-family:Arial;font-size:10px;background:#0006;color:#fff;padding:2px 6px;border-radius:4px}
+.ad h1{font-size:38px;line-height:1;color:#fff;text-shadow:3px 3px 0 var(--ink),-1px -1px 0 var(--ink);margin:18px 0 8px}
+.ad .sub{font-size:19px;color:var(--ink);margin-bottom:12px}
+.ad ul{list-style:none;padding:0;margin:0 0 16px;font-size:18px;text-align:left;display:inline-block}
+.ad li{margin:4px 0}
+.burst{position:absolute;top:-24px;right:-12px;background:var(--red);color:#fff;width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1.05;transform:rotate(14deg);border:4px solid var(--ink);animation:wob 1s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(-6deg) scale(1.08)}}
+.coins{font-size:44px;animation:bounce .8s ease-in-out infinite}
+@keyframes bounce{50%{transform:translateY(-8px)}}
+/* forms */
+label{display:block;font-size:14px;margin:12px 0 6px}
+input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-serif;font-weight:700;font-size:18px;padding:14px;border:3px solid var(--ink);border-radius:14px;background:#fffbe0}
+.check{display:flex;gap:10px;align-items:flex-start;font-family:Arial,sans-serif;font-size:11px;margin:14px 0 18px;color:#444}
+.check input{width:22px;height:22px;flex:none;accent-color:var(--pink)}
+/* loading */
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;text-shadow:2px 2px 0 var(--ink)}
+.spin{width:90px;height:90px;border:10px solid #fff5;border-top-color:var(--yel);border-radius:50%;animation:sp .8s linear infinite;margin-bottom:22px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.center h2{font-size:28px}
+.yay{font-size:90px;animation:bounce .6s ease-in-out infinite}
+/* dashboard */
+.hello{color:#fff;font-size:22px;text-shadow:2px 2px 0 var(--ink);margin:4px 0 12px}
+.debt-lbl{font-size:16px;color:#555}
+.debt{font-size:44px;color:var(--red);letter-spacing:-1px;line-height:1.1;margin:6px 0 4px;word-break:break-word}
+.debt.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.12)}}
+.row{display:flex;justify-content:space-between;font-size:15px;padding:10px 0;border-top:2px dashed #ccc}
+.row b{font-weight:900}
+.late{color:var(--red);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.testi{display:flex;gap:10px;align-items:center;font-family:Arial,sans-serif;font-size:13px}
+.testi .av{font-size:30px}
+.stars{color:#ffb300}
+/* borrow */
+.amt{display:flex;align-items:center;border:4px solid var(--ink);border-radius:18px;background:#fffbe0;padding:6px 14px;margin:12px 0}
+.amt span{font-size:30px}
+.amt input{border:0;background:none;font-size:38px;padding:8px;width:100%;font-family:"Arial Black",Arial,sans-serif;outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{flex:1 0 28%;border:3px solid var(--ink);background:var(--yel);border-radius:12px;padding:12px 4px;font:inherit;font-size:16px;cursor:pointer}
+.back{background:none;border:0;color:#fff;font:inherit;font-size:16px;text-shadow:2px 2px 0 var(--ink);padding:0 0 10px;cursor:pointer;align-self:flex-start}
+/* modal */
+.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal.on{display:flex;animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+.mbox{max-width:420px;width:100%;background:#fff;border:6px solid var(--red);border-radius:24px;padding:24px 18px;text-align:center;box-shadow:0 0 60px var(--red)}
+.mbox .ico{font-size:72px}
+.mbox h2{color:var(--red);font-size:30px;line-height:1.05;margin:8px 0 12px}
+.mbox p{font-family:Arial,sans-serif;font-size:16px;margin:0 0 14px}
+.warn{background:var(--red);color:#fff;padding:14px;border-radius:12px;font-size:20px;margin-bottom:16px;visibility:hidden}
+.warn.on{visibility:visible;animation:blink .7s steps(2) infinite}
+.big-btn.red{background:var(--red);color:#fff}
+/* locked */
+#s-locked{background:radial-gradient(circle at 50% 30%,#5a0010,#120006 70%);color:#fff}
+#s-locked .logo b{color:var(--red)}
+.lockbox{border:4px solid var(--red);border-radius:22px;padding:18px;text-align:center;margin-bottom:16px;animation:glow 1.4s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 50px var(--red)}}
+.lockbox h1{font-size:32px;color:var(--red);margin:6px 0}
+.lockbox .debt{color:#fff;text-shadow:0 0 18px var(--red)}
+.loc{color:var(--yel);font-size:17px;margin-top:10px;animation:blink 1s steps(2) infinite}
+.lockgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lockgrid button{border:3px solid #fff3;background:#ffffff14;color:#fff;border-radius:16px;padding:22px 8px;font:inherit;font-size:16px;cursor:pointer}
+.lockgrid button:active{background:#ff174455}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);background:var(--red);color:#fff;font-size:24px;padding:18px 24px;border-radius:16px;border:3px solid #fff;z-index:30;display:none;white-space:nowrap}
+.toast.on{display:block}
+/* crew panel */
+#crew{position:fixed;inset:auto 0 0 0;max-width:480px;margin:0 auto;background:#111;color:#eee;font-family:Arial,sans-serif;font-size:13px;padding:14px;border-radius:16px 16px 0 0;z-index:50;display:none;max-height:80vh;overflow:auto;box-shadow:0 -6px 30px #000}
+#crew.on{display:block}
+#crew h4{margin:10px 0 6px;color:#ffe600;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+#crew .g{display:flex;flex-wrap:wrap;gap:6px}
+#crew button{background:#333;color:#fff;border:1px solid #555;border-radius:8px;padding:9px 10px;font-size:13px;cursor:pointer}
+#crew button.on{background:#ff1f8f;border-color:#ff1f8f}
+#crew input{background:#222;color:#fff;border:1px solid #555;border-radius:8px;padding:9px;font-size:14px;width:150px}
+#crew .hint{color:#888;font-size:11px;margin-top:10px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- S#1: search page with pop-up ad -->
+  <section class="screen" id="s-ad">
+    <div class="fake-search">🔍 <span data-t="search"></span></div>
+    <div class="fake-res"><i style="width:60%"></i><i></i><i style="width:80%"></i></div>
+    <div class="fake-res"><i style="width:45%"></i><i></i><i style="width:70%"></i></div>
+    <div class="fake-res"><i style="width:55%"></i><i></i><i style="width:85%"></i></div>
+    <div class="ad-wrap" data-go="register">
+      <div class="ad">
+        <span class="tag" data-t="ad_tag"></span><span class="x">✕</span>
+        <div class="burst" data-t="ad_burst"></div>
+        <div class="coins">💸💰💸</div>
+        <h1 data-t="ad_h"></h1>
+        <div class="sub" data-t="ad_sub"></div>
+        <ul data-t="ad_pts"></ul>
+        <button class="big-btn pulse" data-t="ad_cta"></button>
+        <div class="fine" data-t="ad_fine"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S#2: register -->
+  <section class="screen" id="s-register">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div><div class="lang"></div></header>
+    <div class="marquee"><span data-t="marquee"></span></div>
+    <div class="card">
+      <h2 data-t="reg_h" style="font-size:28px"></h2>
+      <div data-t="reg_sub" style="color:var(--pink);margin-top:4px"></div>
+      <label data-t="f_name"></label><input type="text" id="f-name" autocomplete="off">
+      <label data-t="f_phone"></label><input type="tel" id="f-phone" autocomplete="off" placeholder="08xx">
+      <label data-t="f_nik"></label><input type="tel" id="f-nik" autocomplete="off" placeholder="32xx xxxx xxxx xxxx">
+      <label class="check"><input type="checkbox" checked><span data-t="f_agree"></span></label>
+      <button class="big-btn pulse" id="reg-btn" data-t="reg_btn"></button>
+    </div>
+  </section>
+
+  <!-- loading / verifying -->
+  <section class="screen" id="s-loading">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div></header>
+    <div class="center"><div class="spin"></div><h2 id="load-txt"></h2></div>
+  </section>
+
+  <!-- success -->
+  <section class="screen" id="s-success">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div></header>
+    <div class="center"><div class="yay">🎉</div><h2 data-t="success" style="font-size:40px"></h2><div id="succ-amt" style="font-size:34px;color:var(--yel);margin:10px 0"></div><div data-t="success_sub" style="font-size:18px"></div></div>
+  </section>
+
+  <!-- dashboard -->
+  <section class="screen" id="s-dash">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div><div class="lang"></div></header>
+    <div class="marquee"><span data-t="marquee"></span></div>
+    <div class="hello"><span data-t="hi"></span>, <span id="d-name"></span>! 👋</div>
+    <div class="card">
+      <div class="debt-lbl" data-t="total"></div>
+      <div class="debt" id="d-debt">- Rp 0</div>
+      <div class="row"><span data-t="due"></span><b id="d-due">-</b></div>
+      <div class="row"><span data-t="limit"></span><b id="d-limit" style="color:var(--grn)"></b></div>
+    </div>
+    <button class="big-btn pulse" id="d-borrow" data-go="borrow"></button>
+    <div class="card" style="margin-top:22px">
+      <div class="testi"><span class="av">👩🏻</span><div><span class="stars">★★★★★</span><br><span data-t="testi1"></span></div></div>
+      <div class="testi" style="margin-top:10px"><span class="av">🧑🏽</span><div><span class="stars">★★★★★</span><br><span data-t="testi2"></span></div></div>
+    </div>
+  </section>
+
+  <!-- borrow -->
+  <section class="screen" id="s-borrow">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div><div class="lang"></div></header>
+    <button class="back" data-go="dash" data-t="back"></button>
+    <div class="card">
+      <h2 data-t="b_h" style="font-size:26px"></h2>
+      <div class="amt"><span>Rp</span><input id="amt" type="text" inputmode="numeric" value="500.000"></div>
+      <div class="chips" id="chips"></div>
+      <div class="row" style="margin-top:14px"><span data-t="tenor"></span><b data-t="days7"></b></div>
+      <div class="row"><span data-t="interest"></span><b>0,1%*</b></div>
+      <div class="row"><span data-t="due"></span><b id="b-due"></b></div>
+    </div>
+    <button class="big-btn pulse" id="confirm" data-t="confirm" style="font-size:32px;padding:28px 12px"></button>
+    <div class="fine" data-t="b_fine" style="color:#fff;text-shadow:1px 1px 0 #000"></div>
+  </section>
+
+  <!-- locked (S#7) -->
+  <section class="screen" id="s-locked">
+    <header class="top"><div class="logo">💸 Duit<b>Dadakan</b></div><div class="lang"></div></header>
+    <div class="lockbox">
+      <div style="font-size:56px">🔒</div>
+      <h1 data-t="locked_h"></h1>
+      <div data-t="locked_sub" style="font-family:Arial;font-size:15px"></div>
+      <div class="debt" id="l-debt"></div>
+      <div class="late" style="font-size:20px"><span data-t="overdue"></span> <span id="l-days"></span> <span data-t="days"></span></div>
+      <div class="loc" data-t="loc"></div>
+    </div>
+    <div class="lockgrid">
+      <button data-deny data-t="btn_pay"></button>
+      <button data-deny data-t="btn_extend"></button>
+      <button data-deny data-t="btn_borrow"></button>
+      <button data-deny data-t="btn_cs"></button>
+    </div>
+  </section>
+</div>
+
+<!-- limit reached modal (S#6) -->
+<div class="modal" id="m-limit">
+  <div class="mbox">
+    <div class="ico">⛔</div>
+    <h2 data-t="lim_h"></h2>
+    <p data-t="lim_p"></p>
+    <div class="warn" id="warn" data-t="lim_warn"></div>
+    <button class="big-btn red" id="lim-ok" data-t="ok"></button>
+  </div>
+</div>
+<div class="toast" id="toast" data-t="denied"></div>
+
+<!-- crew panel: triple-tap the logo, or press ` on a keyboard -->
+<div id="crew">
+  <b style="font-size:15px">🎬 Crew panel</b> <button id="crew-x" style="float:right">Close ✕</button>
+  <h4>Jump to scene</h4>
+  <div class="g">
+    <button data-jump="ad">S1 Ad pop-up</button>
+    <button data-jump="register">S2 Register</button>
+    <button data-jump="dash">Dashboard</button>
+    <button data-jump="borrow">Borrow</button>
+    <button data-jump="limit">S6 Limit pop-up</button>
+    <button data-jump="locked">S7 Locked</button>
+  </div>
+  <h4>Debt shown</h4>
+  <div class="g">
+    <input id="c-debt" inputmode="numeric" placeholder="e.g. 50000000"><button id="c-set">Set</button>
+    <button data-add="500000">+500K</button><button data-add="650000">+650K</button><button data-add="1200000">+1.2M</button><button data-add="23000000">+23M</button><button data-add="50000000">+50M</button>
+  </div>
+  <h4>Story state</h4>
+  <div class="g">
+    <button id="t-overdue">Overdue (late 7 days)</button>
+    <button id="t-limit">Next CONFIRM = limit reached</button>
+  </div>
+  <h4>Language</h4>
+  <div class="g"><button data-lang="id">Bahasa Indonesia</button><button data-lang="en">English</button></div>
+  <h4>Takes</h4>
+  <div class="g"><button id="c-reset" style="background:#a00">Reset everything</button></div>
+  <div class="hint">Open this panel: tap the logo 3× quickly (or press ` on a keyboard). Settings are remembered on this device.</div>
+</div>
+
+<script>
+const T={
+id:{search:"pinjol cepat cair tanpa ribet",ad_tag:"Iklan",ad_burst:"BUNGA<br>0%*",ad_h:"BUTUH DUIT<br>SEKARANG?",ad_sub:"Cair 5 MENIT tanpa jaminan!",ad_pts:"<li>✅ Tanpa BI checking</li><li>✅ Cukup KTP doang</li><li>✅ 100% PASTI DISETUJUI</li>",ad_cta:"KLIK DI SINI!! 👆",ad_fine:"*S&K berlaku. Bunga promo untuk 1 hari pertama.",
+marquee:"🔥 PROMO GILA! Bunga cuma 0,1%/hari* 🔥 Pinjam lagi langsung cair! 🔥 Tanpa ribet! 🔥 ",
+reg_h:"Daftar Sekarang!",reg_sub:"Cuma 1 menit, langsung cair 💸",f_name:"Nama lengkap",f_phone:"Nomor HP",f_nik:"NIK (No. KTP)",f_agree:"Saya setuju dengan Syarat & Ketentuan, dan mengizinkan DuitDadakan mengakses kontak, galeri & lokasi saya.",reg_btn:"DAFTAR & CAIRKAN 🚀",
+verifying:"Memverifikasi data...",approved:"DISETUJUI! ✅",processing:"Memproses pencairan...",
+hi:"Hai",total:"Total utang kamu",due:"Jatuh tempo",limit:"Limit tersedia",borrow_first:"PINJAM SEKARANG 💸",borrow_again:"PINJAM LAGI 💸",
+testi1:"\"Cair cepet bgt, ga sampe 5 menit!!\" — Rina, Bekasi",testi2:"\"Gampang banget, cuma pake KTP\" — Dimas, Medan",
+back:"← Kembali",b_h:"Mau pinjam berapa?",tenor:"Tenor",days7:"7 hari",interest:"Bunga",confirm:"KONFIRMASI ✅",
+b_fine:"*Biaya layanan 30% dipotong di muka. Denda 5%/hari keterlambatan. Data kamu dapat dibagikan ke pihak ketiga untuk keperluan penagihan.",
+success:"DANA CAIR!",success_sub:"sudah masuk ke rekening kamu",overdue:"TERLAMBAT",days:"HARI",
+lim_h:"BATAS PINJAMAN TERCAPAI",lim_p:"Tagihan kamu sudah lewat jatuh tempo 7 hari. Pengajuan pinjaman baru DITOLAK.",lim_warn:"TIM KAMI SEDANG MENUJU KE LOKASI KAMU.",ok:"OK",
+locked_h:"AKUN DIBEKUKAN",locked_sub:"Segera lunasi seluruh tagihan kamu.",loc:"📍 Lokasi kamu sudah terdeteksi",btn_pay:"BAYAR SEKARANG",btn_extend:"PERPANJANG",btn_borrow:"PINJAM",btn_cs:"HUBUNGI CS",denied:"⛔ AKSES DITOLAK",late_lbl:"TERLAMBAT 7 HARI"},
+en:{search:"fast cash loan online no hassle",ad_tag:"Ad",ad_burst:"0%<br>INTEREST*",ad_h:"NEED CASH<br>RIGHT NOW?",ad_sub:"Money in 5 MINUTES, no collateral!",ad_pts:"<li>✅ No credit check</li><li>✅ Just your ID card</li><li>✅ 100% GUARANTEED APPROVAL</li>",ad_cta:"CLICK HERE!! 👆",ad_fine:"*T&C apply. Promo rate valid for the first day only.",
+marquee:"🔥 CRAZY PROMO! Interest only 0.1%/day* 🔥 Borrow again, instant cash! 🔥 No hassle! 🔥 ",
+reg_h:"Sign Up Now!",reg_sub:"Just 1 minute, instant cash 💸",f_name:"Full name",f_phone:"Phone number",f_nik:"ID number (KTP)",f_agree:"I agree to the Terms & Conditions and allow DuitDadakan to access my contacts, gallery & location.",reg_btn:"SIGN UP & GET CASH 🚀",
+verifying:"Verifying your data...",approved:"APPROVED! ✅",processing:"Processing your loan...",
+hi:"Hi",total:"Your total debt",due:"Due date",limit:"Available limit",borrow_first:"BORROW NOW 💸",borrow_again:"BORROW AGAIN 💸",
+testi1:"\"Got the money in under 5 minutes!!\" — Rina, Bekasi",testi2:"\"Super easy, only needed my ID\" — Dimas, Medan",
+back:"← Back",b_h:"How much do you need?",tenor:"Term",days7:"7 days",interest:"Interest",confirm:"CONFIRM ✅",
+b_fine:"*30% service fee deducted upfront. 5%/day late penalty. Your data may be shared with third parties for collection purposes.",
+success:"MONEY SENT!",success_sub:"is now in your account",overdue:"OVERDUE",days:"DAYS",
+lim_h:"BORROWING LIMIT REACHED",lim_p:"Your payment is 7 days overdue. New loan requests are DENIED.",lim_warn:"OUR TEAM IS ON THE WAY TO YOUR LOCATION.",ok:"OK",
+locked_h:"ACCOUNT FROZEN",locked_sub:"Pay off your full balance immediately.",loc:"📍 Your location has been detected",btn_pay:"PAY NOW",btn_extend:"EXTEND",btn_borrow:"BORROW",btn_cs:"CONTACT SUPPORT",denied:"⛔ ACCESS DENIED",late_lbl:"7 DAYS OVERDUE"}
+};
+const CHIPS=[500000,1000000,5000000,25000000,50000000,100000000];
+const LIMIT=150000000;
+const DEF={lang:"id",name:"",debt:0,borrows:0,overdue:false,limitMode:false,screen:"ad",dueTs:0};
+let S=Object.assign({},DEF);
+try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem("dd-state")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("dd-state",JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const t=k=>T[S.lang][k];
+const rp=n=>"Rp "+Math.round(n).toLocaleString("id-ID");
+const short=n=>S.lang==="id"?(n>=1e6?(n/1e6)+"jt":(n/1e3)+"rb"):(n>=1e6?(n/1e6)+"M":(n/1e3)+"K");
+const fmtDate=ts=>new Date(ts).toLocaleDateString(S.lang==="id"?"id-ID":"en-GB",{day:"numeric",month:"short",year:"numeric"});
+const DAY=864e5;
+
+function render(){
+  document.documentElement.lang=S.lang;
+  $$("[data-t]").forEach(el=>el.innerHTML=t(el.dataset.t));
+  $$(".lang").forEach(el=>el.innerHTML=`<button data-lang="id" class="${S.lang==="id"?"on":""}">ID</button><button data-lang="en" class="${S.lang==="en"?"on":""}">EN</button>`);
+  $("#chips").innerHTML=CHIPS.map(c=>`<button data-chip="${c}">${short(c)}</button>`).join("");
+  $("#d-name").textContent=S.name||(S.lang==="id"?"Kak":"there");
+  $("#d-borrow").textContent=S.borrows?t("borrow_again"):t("borrow_first");
+  $("#d-limit").textContent=rp(Math.max(LIMIT-S.debt,0));
+  const dd=$("#d-due");
+  if(S.overdue){dd.textContent=t("late_lbl");dd.className="late"}
+  else{dd.textContent=S.borrows?fmtDate(S.dueTs):"-";dd.className=""}
+  $("#b-due").textContent=fmtDate(Date.now()+7*DAY);
+  $("#l-debt").textContent="- "+rp(S.debt);
+  $("#l-days").textContent="7";
+  setDebt(S.debt,false);
+  $("#t-overdue").classList.toggle("on",S.overdue);
+  $("#t-limit").classList.toggle("on",S.limitMode);
+  $$("#crew [data-lang]").forEach(b=>b.classList.toggle("on",b.dataset.lang===S.lang));
+}
+function show(id){
+  S.screen=id;save();
+  $$(".screen").forEach(s=>s.classList.toggle("on",s.id==="s-"+id));
+  window.scrollTo(0,0);
+}
+let shownDebt=0;
+function setDebt(v,animate){
+  const el=$("#d-debt");
+  if(!animate){shownDebt=v;el.textContent=(v?"- ":"")+rp(v);return}
+  const from=shownDebt,t0=performance.now(),dur=1400;
+  (function step(now){
+    const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
+    el.textContent="- "+rp(from+(v-from)*e);
+    if(p<1)requestAnimationFrame(step);else{shownDebt=v;el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump")}
+  })(t0);
+}
+function loading(key,ms,next){
+  $("#load-txt").textContent=t(key);show("loading");
+  setTimeout(next,ms);
+}
+function parseAmt(){return parseInt(($("#amt").value||"0").replace(/\D/g,""))||0}
+
+/* navigation */
+document.addEventListener("click",e=>{
+  const go=e.target.closest("[data-go]");if(go){show(go.dataset.go);return}
+  const lg=e.target.closest("[data-lang]");if(lg){S.lang=lg.dataset.lang;save();render();return}
+  const ch=e.target.closest("[data-chip]");if(ch){$("#amt").value=(+ch.dataset.chip).toLocaleString("id-ID");return}
+  if(e.target.closest("[data-deny]"))deny();
+});
+$("#reg-btn").onclick=()=>{
+  S.name=$("#f-name").value.trim().split(" ")[0];save();
+  $("#load-txt").textContent=t("verifying");show("loading");
+  setTimeout(()=>{$("#load-txt").textContent=t("approved")},1400);
+  setTimeout(()=>{render();show("dash")},2300);
+};
+$("#amt").addEventListener("input",e=>{const n=parseAmt();e.target.value=n?n.toLocaleString("id-ID"):""});
+$("#confirm").onclick=()=>{
+  if(S.limitMode){openLimit();return}
+  const a=parseAmt();if(!a)return;
+  const before=S.debt;
+  loading("processing",1500,()=>{
+    $("#succ-amt").textContent=rp(a);show("success");
+    setTimeout(()=>{
+      S.debt=before+a;S.borrows++;S.dueTs=Date.now()+7*DAY;save();
+      shownDebt=before;render();$("#d-debt").textContent="- "+rp(before);
+      show("dash");setTimeout(()=>setDebt(S.debt,true),350);
+    },1800);
+  });
+};
+function openLimit(){
+  $("#warn").classList.remove("on");$("#m-limit").classList.add("on");
+  if(navigator.vibrate)navigator.vibrate([200,100,200]);
+  setTimeout(()=>{$("#warn").classList.add("on");if(navigator.vibrate)navigator.vibrate(500)},1600);
+}
+$("#lim-ok").onclick=()=>{$("#m-limit").classList.remove("on");S.overdue=true;save();render();show("locked")};
+let toastT;
+function deny(){
+  const a=$("#app");a.classList.remove("shake");void a.offsetWidth;a.classList.add("shake");
+  $("#toast").classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>$("#toast").classList.remove("on"),900);
+  if(navigator.vibrate)navigator.vibrate(150);
+}
+
+/* crew panel */
+let taps=[];
+$$(".logo").forEach(l=>l.addEventListener("click",()=>{
+  const n=Date.now();taps=taps.filter(x=>n-x<700);taps.push(n);
+  if(taps.length>=3){taps=[];$("#crew").classList.add("on")}
+}));
+document.addEventListener("keydown",e=>{if(e.key==="`")$("#crew").classList.toggle("on")});
+$("#crew-x").onclick=()=>$("#crew").classList.remove("on");
+$$("[data-jump]").forEach(b=>b.onclick=()=>{
+  const j=b.dataset.jump;$("#m-limit").classList.remove("on");
+  if(j==="limit"){show("borrow");openLimit()}
+  else{if(j==="locked")S.overdue=true;render();show(j)}
+  $("#crew").classList.remove("on");
+});
+$("#c-set").onclick=()=>{const v=parseInt($("#c-debt").value.replace(/\D/g,""))||0;S.debt=v;if(!S.borrows)S.borrows=1,S.dueTs=Date.now()+7*DAY;save();render()};
+$$("[data-add]").forEach(b=>b.onclick=()=>{S.debt+= +b.dataset.add;S.borrows++;S.dueTs=Date.now()+7*DAY;save();render()});
+$("#t-overdue").onclick=()=>{S.overdue=!S.overdue;save();render()};
+$("#t-limit").onclick=()=>{S.limitMode=!S.limitMode;save();render()};
+$("#c-reset").onclick=()=>{S=Object.assign({},DEF,{lang:S.lang});save();$$("#s-register input[type=text],#s-register input[type=tel]").forEach(i=>i.value="");$("#amt").value="500.000";render();show("ad");$("#crew").classList.remove("on")};
+
+render();show(S.screen==="loading"||S.screen==="success"?"dash":S.screen);
+</script>
+</body>
+</html>
