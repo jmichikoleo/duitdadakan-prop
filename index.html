@@ -110,6 +110,17 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
 @keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
 .toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);background:var(--red);color:#fff;font-size:24px;padding:18px 24px;border-radius:16px;border:3px solid #fff;z-index:30;display:none;white-space:nowrap}
 .toast.on{display:block}
+/* reminder */
+.remind{position:fixed;inset:0;z-index:15;display:none;align-items:flex-start;justify-content:center;padding:18px 16px;background:#0006}
+.remind.on{display:flex}
+.rcard{max-width:420px;width:100%;background:#fff;border:5px solid var(--ink);border-radius:22px;padding:18px;text-align:center;box-shadow:8px 8px 0 var(--ink);animation:drop .45s cubic-bezier(.2,1.5,.4,1);touch-action:none}
+@keyframes drop{from{transform:translateY(-140%)}}
+.rtitle{font-size:20px;color:#555}
+.rmain{font-size:30px;line-height:1.1;margin:10px 0 12px;padding:14px 8px;border-radius:14px;background:var(--grn);color:var(--ink)}
+.rmain b{font-size:44px;display:block}
+.rmain.warn2{background:#ff9100}
+.rmain.late2{background:var(--red);color:#fff;animation:blink 1s steps(2) infinite}
+.rrow{display:flex;justify-content:space-between;font-size:16px;padding:8px 0;border-top:2px dashed #ccc}
 /* crew panel */
 #crew{position:fixed;inset:auto 0 0 0;max-width:480px;margin:0 auto;background:#111;color:#eee;font-family:Arial,sans-serif;font-size:13px;padding:14px;border-radius:16px 16px 0 0;z-index:50;display:none;max-height:80vh;overflow:auto;box-shadow:0 -6px 30px #000}
 #crew.on{display:block}
@@ -240,6 +251,17 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
 </div>
 <div class="toast" id="toast" data-t="denied"></div>
 
+<!-- due-date reminder (after each confirm; swipe or tap OK to dismiss) -->
+<div class="remind" id="remind">
+  <div class="rcard" id="rcard">
+    <div class="rtitle">⏰ <span data-t="r_title"></span></div>
+    <div class="rmain" id="r-main"></div>
+    <div class="rrow"><span data-t="due"></span><b id="r-date"></b></div>
+    <div class="rrow"><span data-t="r_total"></span><b id="r-total"></b></div>
+    <button class="big-btn" id="r-ok" data-t="r_ok" style="font-size:20px;padding:14px;margin-top:12px"></button>
+  </div>
+</div>
+
 <!-- crew panel: triple-tap the logo, or press ` on a keyboard -->
 <div id="crew">
   <b style="font-size:15px">🎬 Crew panel</b> <button id="crew-x" style="float:right">Close ✕</button>
@@ -263,6 +285,11 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
     <button id="t-limit">Next CONFIRM = limit reached</button>
     <button id="t-blocked">Blocked (can't borrow)</button>
   </div>
+  <h4>Show due-date reminder</h4>
+  <div class="g">
+    <button data-rem="7">7 days left</button><button data-rem="3">3 days left</button><button data-rem="1">1 day left</button>
+    <button data-rem="0">Due today</button><button data-rem="-3">3 days late</button><button data-rem="-7">7 days late</button>
+  </div>
   <h4>Borrowing limit (auto-blocks when debt would go over)</h4>
   <div class="g"><input id="c-limit" inputmode="numeric"><button id="c-setlimit">Set limit</button></div>
   <h4>Language</h4>
@@ -284,6 +311,7 @@ back:"← Kembali",b_h:"Mau pinjam berapa?",tenor:"Tenor",days7:"7 hari",interes
 b_fine:"*Biaya layanan 30% dipotong di muka. Denda 5%/hari keterlambatan. Data kamu dapat dibagikan ke pihak ketiga untuk keperluan penagihan.",
 success:"DANA CAIR!",success_sub:"sudah masuk ke rekening kamu",overdue:"TERLAMBAT",days:"HARI",
 lim_h:"BATAS PINJAMAN TERCAPAI",lim_cant:"KAMU TIDAK BISA MEMINJAM LAGI",lim_p:"Tagihan kamu sudah lewat jatuh tempo 7 hari. Pengajuan pinjaman baru DITOLAK.",lim_warn:"TIM KAMI SEDANG MENUJU KE LOKASI KAMU.",ok:"OK",
+r_title:"Pengingat Pembayaran",r_total:"Total tagihan",r_ok:"OKE, MENGERTI",r_in:"Jatuh tempo dalam",r_today:"JATUH TEMPO",r_today2:"HARI INI!",r_late:"TERLAMBAT",r_days:"HARI",
 nope:"🚫 KAMU SUDAH TIDAK BISA MEMINJAM LAGI",limit_btn:"🚫 LIMIT HABIS",
 locked_h:"AKUN DIBEKUKAN",locked_sub:"Segera lunasi seluruh tagihan kamu.",loc:"📍 Lokasi kamu sudah terdeteksi",btn_pay:"BAYAR SEKARANG",btn_extend:"PERPANJANG",btn_borrow:"PINJAM",btn_cs:"HUBUNGI CS",denied:"⛔ AKSES DITOLAK",late_lbl:"TERLAMBAT 7 HARI"},
 en:{search:"fast cash loan online no hassle",ad_tag:"Ad",ad_burst:"0%<br>INTEREST*",ad_h:"NEED CASH<br>RIGHT NOW?",ad_sub:"Money in 5 MINUTES, no collateral!",ad_pts:"<li>✅ No credit check</li><li>✅ Just your ID card</li><li>✅ 100% GUARANTEED APPROVAL</li>",ad_cta:"CLICK HERE!! 👆",ad_fine:"*T&C apply. Promo rate valid for the first day only.",
@@ -296,6 +324,7 @@ back:"← Back",b_h:"How much do you need?",tenor:"Term",days7:"7 days",interest
 b_fine:"*30% service fee deducted upfront. 5%/day late penalty. Your data may be shared with third parties for collection purposes.",
 success:"MONEY SENT!",success_sub:"is now in your account",overdue:"OVERDUE",days:"DAYS",
 lim_h:"BORROWING LIMIT REACHED",lim_cant:"YOU CANNOT BORROW ANYMORE",lim_p:"Your payment is 7 days overdue. New loan requests are DENIED.",lim_warn:"OUR TEAM IS ON THE WAY TO YOUR LOCATION.",ok:"OK",
+r_title:"Payment Reminder",r_total:"Amount due",r_ok:"OK, GOT IT",r_in:"Due in",r_today:"DUE",r_today2:"TODAY!",r_late:"OVERDUE BY",r_days:"DAYS",
 nope:"🚫 YOU ARE NO LONGER ALLOWED TO BORROW",limit_btn:"🚫 LIMIT REACHED",
 locked_h:"ACCOUNT FROZEN",locked_sub:"Pay off your full balance immediately.",loc:"📍 Your location has been detected",btn_pay:"PAY NOW",btn_extend:"EXTEND",btn_borrow:"BORROW",btn_cs:"CONTACT SUPPORT",denied:"⛔ ACCESS DENIED",late_lbl:"7 DAYS OVERDUE"}
 };
@@ -386,6 +415,7 @@ $("#confirm").onclick=()=>{
       S.debt=before+a;S.borrows++;S.dueTs=Date.now()+7*DAY;save();
       shownDebt=before;render();$("#d-debt").textContent="- "+rp(before);
       show("dash");setTimeout(()=>setDebt(S.debt,true),350);
+      setTimeout(()=>showReminder(7),2200);
     },1800);
   });
 };
@@ -398,6 +428,33 @@ $("#lim-ok").onclick=()=>{
   $("#m-limit").classList.remove("on");S.overdue=true;S.blocked=true;save();render();
   const a=$("#app");a.classList.remove("shake");void a.offsetWidth;a.classList.add("shake");
 };
+let lastDays=7;
+function showReminder(days){
+  lastDays=days;
+  const m=$("#r-main");
+  m.className="rmain"+(days<=0?" late2":days<=3?" warn2":"");
+  if(days>0)m.innerHTML=`${t("r_in")}<b>${days} ${t("r_days")}</b>`;
+  else if(days===0)m.innerHTML=`${t("r_today")}<b>${t("r_today2")}</b>`;
+  else m.innerHTML=`${t("r_late")}<b>${-days} ${t("r_days")}</b>`;
+  $("#r-date").textContent=fmtDate(Date.now()+days*DAY);
+  $("#r-total").textContent=rp(S.debt);
+  const c=$("#rcard");c.style.transform="";c.style.opacity="";
+  const r=$("#remind");r.classList.remove("on");void r.offsetWidth;r.classList.add("on");
+  if(navigator.vibrate)navigator.vibrate(days<=0?[300,100,300]:120);
+}
+function hideReminder(dx,dy){
+  const c=$("#rcard");c.style.transition="transform .25s,opacity .25s";
+  c.style.transform=`translate(${dx}px,${dy}px)`;c.style.opacity="0";
+  setTimeout(()=>{$("#remind").classList.remove("on");c.style.transition=""},250);
+}
+$("#r-ok").onclick=()=>hideReminder(0,-400);
+(function(){ // swipe to dismiss, like brushing off a notification
+  const c=$("#rcard");let sx=0,sy=0,drag=false;
+  c.addEventListener("pointerdown",e=>{if(e.target.id==="r-ok")return;drag=true;sx=e.clientX;sy=e.clientY;c.setPointerCapture(e.pointerId)});
+  c.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-sx,dy=Math.min(e.clientY-sy,0);c.style.transform=`translate(${dx}px,${dy}px)`});
+  c.addEventListener("pointerup",e=>{if(!drag)return;drag=false;const dx=e.clientX-sx,dy=e.clientY-sy;
+    if(Math.abs(dx)>70)hideReminder(dx>0?500:-500,0);else if(dy<-50)hideReminder(0,-400);else c.style.transform=""});
+})();
 let toastT;
 function deny(){
   const a=$("#app");a.classList.remove("shake");void a.offsetWidth;a.classList.add("shake");
@@ -423,6 +480,7 @@ $("#c-set").onclick=()=>{const v=parseInt($("#c-debt").value.replace(/\D/g,""))|
 $$("[data-add]").forEach(b=>b.onclick=()=>{S.debt+= +b.dataset.add;S.borrows++;S.dueTs=Date.now()+7*DAY;save();render()});
 $("#t-overdue").onclick=()=>{S.overdue=!S.overdue;save();render()};
 $("#t-limit").onclick=()=>{S.limitMode=!S.limitMode;save();render()};
+$$("[data-rem]").forEach(b=>b.onclick=()=>{$("#crew").classList.remove("on");showReminder(+b.dataset.rem)});
 $("#t-blocked").onclick=()=>{S.blocked=!S.blocked;save();render()};
 $("#c-setlimit").onclick=()=>{const v=parseInt($("#c-limit").value.replace(/\D/g,""))||0;if(v){S.limit=v;$("#c-limit").value="";save();render()}};
 $("#c-reset").onclick=()=>{S=Object.assign({},DEF,{lang:S.lang});save();$$("#s-register input[type=text],#s-register input[type=tel]").forEach(i=>i.value="");$("#amt").value="500.000";render();show("ad");$("#crew").classList.remove("on")};
