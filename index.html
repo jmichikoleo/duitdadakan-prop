@@ -318,8 +318,8 @@ input[type=text],input[type=tel]{width:100%;font:inherit;font-family:Arial,sans-
   <h4>Language</h4>
   <div class="g"><button data-lang="id">Bahasa Indonesia</button><button data-lang="en">English</button></div>
   <h4>Takes</h4>
-  <div class="g"><button id="c-reset" style="background:#a00">Reset everything</button></div>
-  <div class="hint">Open this panel: tap the logo 3× quickly (or press ` on a keyboard). Settings are remembered on this device.</div>
+  <div class="g"><button id="c-reset" style="background:#a00">↺ Reset everything (for a new take)</button></div>
+  <div class="hint">Open this panel: tap the logo 3× quickly (or press ` on a keyboard). Settings are remembered on this device.<br>Reset needs two taps (tap, then tap again within 3 s). Backup: open the link with <b>?reset</b> at the end.</div>
 </div>
 
 <script>
@@ -535,8 +535,30 @@ $$("[data-late]").forEach(b=>b.onclick=()=>{$("#crew").classList.remove("on");S.
 $$("[data-rem]").forEach(b=>b.onclick=()=>{$("#crew").classList.remove("on");showReminder(+b.dataset.rem)});
 $("#t-blocked").onclick=()=>{S.blocked=!S.blocked;save();render()};
 $("#c-setlimit").onclick=()=>{const v=parseInt($("#c-limit").value.replace(/\D/g,""))||0;if(v){S.limit=v;$("#c-limit").value="";save();render()}};
-$("#c-reset").onclick=()=>{S=Object.assign({},DEF,{lang:S.lang});save();$$("#s-register input[type=text],#s-register input[type=tel]").forEach(i=>i.value="");$("#amt").value="500.000";render();show("ad");$("#crew").classList.remove("on")};
+function resetAll(){
+  S=Object.assign({},DEF,{lang:S.lang});save();
+  $$("#s-register input[type=text],#s-register input[type=tel]").forEach(i=>i.value="");
+  $("#amt").value="500.000";
+  ["#m-limit","#remind","#notif","#crew"].forEach(s=>$(s).classList.remove("on"));
+  render();show("ad");
+}
+let armT=null;
+$("#c-reset").onclick=()=>{
+  const b=$("#c-reset");
+  if(!armT){ // first tap only arms it
+    b.textContent="⚠️ Tap AGAIN to confirm reset";b.style.background="#f50";
+    armT=setTimeout(()=>{armT=null;b.textContent="↺ Reset everything (for a new take)";b.style.background="#a00"},3000);
+    return;
+  }
+  clearTimeout(armT);armT=null;b.textContent="↺ Reset everything (for a new take)";b.style.background="#a00";
+  resetAll();
+};
 
+// backup: open the link with ?reset to start clean
+if(/[?&]reset\b/.test(location.search)){
+  S=Object.assign({},DEF,{lang:S.lang});save();
+  history.replaceState(null,"",location.pathname);
+}
 render();show(S.screen==="loading"||S.screen==="success"?"dash":S.screen);
 </script>
 </body>
